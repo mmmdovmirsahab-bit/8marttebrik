@@ -1,1 +1,239 @@
 
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8 Mart - M2DESIGN & Gemini</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --soft: #ffb3c1;
+            --glass: rgba(255, 255, 255, 0.2);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle, #fff0f3 0%, #ffb3c1 100%);
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Uçan Ürəklər Animasiyası */
+        .heart-bg {
+            position: absolute;
+            color: var(--primary);
+            opacity: 0.4;
+            pointer-events: none;
+            z-index: 0;
+            animation: moveUp 6s linear infinite;
+        }
+
+        @keyframes moveUp {
+            0% { transform: translateY(110vh) scale(0.5); opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+        }
+
+        /* Liquid Glass Card */
+        .glass-container {
+            position: relative;
+            z-index: 10;
+            width: 85%;
+            max-width: 420px;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 40px 20px;
+            box-shadow: 0 15px 40px rgba(255, 77, 109, 0.2);
+            text-align: center;
+        }
+
+        h1 { font-family: 'Dancing Script', cursive; color: #c9184a; font-size: 2.2rem; margin-top: 0; }
+        
+        .input-box { margin-bottom: 15px; text-align: left; }
+        label { font-size: 11px; color: #c9184a; font-weight: 700; margin-left: 10px; text-transform: uppercase; }
+        
+        select, input, textarea {
+            width: 100%;
+            padding: 14px;
+            border-radius: 15px;
+            border: none;
+            background: rgba(255, 255, 255, 0.5);
+            margin-top: 5px;
+            font-family: inherit;
+            box-sizing: border-box;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus, textarea:focus { background: rgba(255, 255, 255, 0.9); }
+
+        .btn-create {
+            background: linear-gradient(45deg, #ff4d6d, #ff85a2);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            box-shadow: 0 8px 20px rgba(255, 77, 109, 0.3);
+            transition: 0.3s;
+        }
+
+        .btn-create:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(255, 77, 109, 0.4); }
+
+        /* Hədiyyə Ekranı */
+        #gift-view { display: none; }
+        .gift-icon {
+            font-size: 90px;
+            cursor: pointer;
+            animation: bounce 1.5s infinite;
+            display: inline-block;
+            margin: 20px 0;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
+
+        /* Final Mesaj Ekranı */
+        #final-view { display: none; animation: zoomIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+
+        .name-style { font-family: 'Dancing Script', cursive; font-size: 2.5rem; color: #ff4d6d; margin: 15px 0; }
+        .msg-style { font-size: 17px; color: #444; line-height: 1.6; margin-bottom: 25px; white-space: pre-wrap; }
+        
+        .m2-footer { font-size: 10px; color: #888; letter-spacing: 1px; margin-top: 15px; }
+
+        #copy-area {
+            margin-top: 20px;
+            padding: 12px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 12px;
+            display: none;
+            font-size: 12px;
+            word-break: break-all;
+            border: 1px dashed var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+<div class="glass-container">
+    <div id="setup-form">
+        <h1>M2DESIGN Special</h1>
+        <div class="input-box">
+            <label>KİM ÜÇÜNDÜR?</label>
+            <select id="userCat">
+                <option value="Canım Anam">Anam</option>
+                <option value="Əziz Bacım">Bacım</option>
+                <option value="Gözəl Nənəm">Nənəm</option>
+                <option value="Bibi">Bibi</option>
+                <option value="Həyatımın Mənası">Sevgili</option>
+            </select>
+        </div>
+        <div class="input-box">
+            <label>AD</label>
+            <input type="text" id="userName" placeholder="Məsələn: Ayşən">
+        </div>
+        <div class="input-box">
+            <label>MESAJINIZ</label>
+            <textarea id="userMsg" rows="3" placeholder="Ürək sözlərin..."></textarea>
+        </div>
+        <button class="btn-create" onclick="makeLink()">Link yarat və sevindir ✨</button>
+        <div id="copy-area"></div>
+    </div>
+
+    <div id="gift-view">
+        <h1 id="gift-header">Sənə bir hədiyyə var!</h1>
+        <div class="gift-icon" onclick="openSurprise()">🎁</div>
+        <p style="color: #c9184a; font-weight: 600;">Açmaq üçün toxun!</p>
+    </div>
+
+    <div id="final-view">
+        <div style="font-size: 45px;">🌸</div>
+        <div class="name-style" id="resName"></div>
+        <div class="msg-style" id="resMsg"></div>
+        <div class="m2-footer">CREATED BY GEMINI & M2DESIGN</div>
+    </div>
+</div>
+
+<script>
+    // Arxa fonda ürəklər yaradaq
+    function createHearts() {
+        const h = document.createElement('div');
+        h.innerHTML = '❤️';
+        h.className = 'heart-bg';
+        h.style.left = Math.random() * 100 + 'vw';
+        h.style.fontSize = Math.random() * 20 + 10 + 'px';
+        document.body.appendChild(h);
+        setTimeout(() => h.remove(), 6000);
+    }
+    setInterval(createHearts, 400);
+
+    // Link Yaratma Funksiyası
+    function makeLink() {
+        const cat = document.getElementById('userCat').value;
+        const name = document.getElementById('userName').value;
+        const msg = document.getElementById('userMsg').value;
+
+        if(!name || !msg) return alert("Boş buraxma qaqam!");
+
+        // Məlumatları Base64 ilə linkə sıxırıq
+        const data = btoa(unescape(encodeURIComponent(JSON.stringify({cat, name, msg}))));
+        const currentUrl = window.location.href.split('?')[0];
+        const finalUrl = currentUrl + '?gift=' + data;
+        
+        const area = document.getElementById('copy-area');
+        area.style.display = 'block';
+        area.innerHTML = `<strong>Linki kopyala göndər:</strong><br><small>${finalUrl}</small>`;
+    }
+
+    // Səhifə yüklənəndə yoxla
+    window.onload = () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if(urlParams.has('gift')) {
+            document.getElementById('setup-form').style.display = 'none';
+            document.getElementById('gift-view').style.display = 'block';
+            
+            try {
+                const decoded = JSON.parse(decodeURIComponent(escape(atob(urlParams.get('gift')))));
+                document.getElementById('resName').innerText = `${decoded.cat} ${decoded.name}`;
+                document.getElementById('resMsg').innerText = decoded.msg;
+                document.getElementById('gift-header').innerText = `Əziz ${decoded.name}, sənə mesaj var!`;
+            } catch(e) { console.error("Data error"); }
+        }
+    }
+
+    // Hədiyyəni açanda olan effektlər
+    function openSurprise() {
+        document.getElementById('gift-view').style.display = 'none';
+        document.getElementById('final-view').style.display = 'block';
+
+        // Estetik Fişənglər
+        var end = Date.now() + (3 * 1000);
+        var colors = ['#ff4d6d', '#ffffff', '#ffb3c1'];
+
+        (function frame() {
+            confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 }, colors: colors });
+            confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 }, colors: colors });
+            if (Date.now() < end) { requestAnimationFrame(frame); }
+        }());
+    }
+</script>
+
+</body>
+</html>
